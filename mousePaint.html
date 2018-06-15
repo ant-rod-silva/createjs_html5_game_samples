@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>EaselJS: Mouse Paint</title>
+	<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+	<script>
+		var stage, applabel, lineShape, oldX, oldY, size, color;
+		
+		function init() {
+
+			//VARIABLES
+			color = "#00F";
+			size = 2;
+
+            // Init stage
+    		stage = new createjs.Stage("appCanvas");
+			stage.name = "stage";
+			stage.enableDOMEvents(true);
+			
+			// For mobile devices.
+			createjs.Touch.enable(stage);
+			
+			applabel = new createjs.Text("Mouse Paint - mova/pressione o mouse", "24px Arial");
+			applabel.x = applabel.y = 5;
+			
+			lineShape = new createjs.Shape();
+			stage.addChild(lineShape, applabel);
+			
+			
+			// add handler for stage mouse events:
+			stage.on("stagemousedown", function(event) {
+				size = 10;
+			})                
+			
+			// random color
+			stage.on("stagemouseup", function(event) {
+				color = createjs.Graphics.getHSL(Math.random()*360, 100, 50);
+				size = 2;
+			})
+			 
+			// mouse move on stage event
+		    stage.on("stagemousemove",function(evt) {
+				if (oldX) {
+					lineShape.graphics.beginStroke(color)
+								  .setStrokeStyle(size, "round")
+								  .moveTo(oldX, oldY)
+								  .lineTo(evt.stageX, evt.stageY);
+					stage.update();
+				}
+				oldX = evt.stageX;
+				oldY = evt.stageY;
+			})
+			
+			stage.update();
+		}
+	</script>
+</head>
+<body onload="init();">
+	<canvas id="appCanvas" width="500" height="200" style="border:1px solid black;">
+		alternate content
+	</canvas>
+</body>
+</html>
