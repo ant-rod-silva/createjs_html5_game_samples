@@ -1,0 +1,142 @@
+<html>
+<head>
+    <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+	<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+    <script src="https://code.createjs.com/soundjs-0.6.2.min.js"></script></head>
+    <script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
+
+	<script>
+	var stage;
+	var circleRadius, squareHeight, squareWidth;
+    function init() {
+		// Init stage
+		stage = new createjs.Stage("appCanvas");
+		stage.name = "stage";
+
+		// For mobile devices.
+		createjs.Touch.enable(stage);
+
+		//VARIABLES
+		circleRadius = 50;
+		//squareContainer Size
+		squareHeight = 100;
+		squareWidth = 100;
+		
+		// circle
+		var circle = new createjs.Shape();
+        circle.graphics.setStrokeStyle(2).beginStroke("black").beginFill("red");
+		circle.graphics.drawCircle(0,0, circleRadius);
+
+		// text inside circle
+		var circleLabel = new createjs.Text("arraste-me", "bold 14px Arial", "#FFFFFF");
+		circleLabel.set({
+			name: "circleLabel",
+			textAlign: "center", // alinhamento horizontal
+			textBaseline: "middle" // alinhamento vertical
+		})
+		var b = circleLabel.getBounds();
+
+        // Drag Object Creation
+		// Placed inside a container to hold both label and shape
+		var circleContainer = new createjs.Container();
+		circleContainer.set({
+			name: "circleContainer",
+			x: 100,
+			y: 100
+		})
+		circleContainer.addChild(circle, circleLabel);
+
+		var box = new createjs.Shape();
+		box.graphics.setStrokeStyle(2).beginStroke("black").beginFill("#FFFFFF");
+		box.graphics.rect(0, 0, squareHeight, squareWidth);
+
+		var squareLabel = new createjs.Text("ATÉ AQUI", "bold 14px Lato", "#000");
+		squareLabel.set({
+			name: "squareLabel",
+			textAlign: "center",
+			textBaseline: "middle",
+			x: squareWidth / 2,
+			y: squareHeight / 2
+		})
+
+		var squareContainer = new createjs.Container();
+		squareContainer.set({
+			name: "squareContainer",
+			x: 350,
+			y: 50
+		})
+		squareContainer.setBounds(350, 50, squareWidth, squareHeight);
+		squareContainer.addChild(box, squareLabel);
+
+
+		function intersect(obj1, obj2){
+			var objBounds1 = obj1.getBounds().clone();
+			var objBounds2 = obj2.getBounds().clone();
+
+			var pt = obj1.globalToLocal(objBounds2.x, objBounds2.y);
+
+			var h1 = -(objBounds1.height / 2 + objBounds2.height);
+			var h2 = objBounds2.width / 2;
+			var w1 = -(objBounds1.width / 2 + objBounds2.width);
+			var w2 = objBounds2.width / 2;
+
+			if(pt.x > w2 || pt.x < w1) return false;
+			if(pt.y > h2 || pt.y < h1) return false;
+
+			return true;
+		}
+		
+		//DRAG FUNCTIONALITY =====================
+		circleContainer.on("mousedown", function (evt) {
+			// keep a record on the offset between the mouse position and the container
+			// position. currentTarget will be the container that the event listener was added to:
+			evt.currentTarget.offset = {x: this.x - evt.stageX, y: this.y - evt.stageY};
+		});
+		
+		circleContainer.on("pressmove",function(evt) {
+			// currentTarget will be the container that the event listener was added to:
+			evt.currentTarget.x = evt.stageX;
+			evt.currentTarget.y = evt.stageY;
+			// make sure to redraw the stage to show the change:
+			stage.update();   
+
+			if(intersect(evt.currentTarget, squareContainer)){
+				evt.currentTarget.alpha=0.2; // transparent circle
+				box.graphics.clear();
+				box.graphics.setStrokeStyle(3).beginStroke("#0066A4").beginFill("#FFFFFF"); // blue square
+				box.graphics.rect(0, 0, squareHeight, squareWidth);
+			}
+			else{
+				evt.currentTarget.alpha=1;
+				box.graphics.clear();
+				box.graphics.setStrokeStyle(2).beginStroke("black").beginFill("#FFFFFF");
+				box.graphics.rect(0, 0, squareHeight, squareWidth);
+			}
+		});
+		
+		//Mouse UP and SNAP====================
+		circleContainer.on("pressup", function(evt) {
+		  if(intersect(evt.currentTarget, squareContainer)){
+			circleContainer.x = squareContainer.x + squareWidth/2;
+			circleContainer.y = squareContainer.y + squareHeight/2;
+			circleContainer.alpha = 1;
+			box.graphics.clear();     
+			box.graphics.setStrokeStyle(2).beginStroke("black").beginFill("#FFFFFF");
+			box.graphics.rect(0, 0, squareHeight, squareWidth);
+			stage.update(evt);
+		  }
+		});
+
+		
+		stage.addChild(squareContainer, circleContainer);
+		stage.mouseMoveOutside = true;
+		stage.update();
+    }
+    </script>
+</head>
+<body>
+<body onload="init();">
+  <canvas id="appCanvas" width="500" height="300" style="border:1px solid black; background-color: #ffffcc"></canvas>
+</body>
+</body>
+</html>
