@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>EaselJS demo: Time based animation</title>
+	<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+	<script>
+		
+		var stage, redCircle, blueCircle;
+
+		function init() {
+			stage = new createjs.Stage("appCanvas");
+			stage.name = "stage";
+			
+			redCircle = new createjs.Shape();
+			redCircle.graphics.beginFill("red").drawCircle(0, 0, 40);
+			redCircle.y = 50;
+			stage.addChild(redCircle);
+			
+			blueCircle = new createjs.Shape();
+			blueCircle.graphics.beginFill("blue").drawCircle(0, 0, 40);
+			blueCircle.y = 150;
+			stage.addChild(blueCircle);
+			
+			createjs.Ticker.on("tick", tick);
+			createjs.Ticker.setFPS(20);
+		}
+		
+		// when you change the FPS, the red circle still moves at the same velocity, 
+		// whereas the blue circle's velocity is relative to the framerate. 
+		// Also note how at 20fps, the red circle moves very slightly faster than the blue circle, 
+		// because it accounts for frames that take slightly longer than the expected 50ms.
+		function tick(event) {
+			// time based
+			// move 100 pixels per second (elapsedTimeInMS / 1000msPerSecond * pixelsPerSecond):
+			redCircle.x = redCircle.x + (event.delta)/1000*100;
+			if (redCircle.x > stage.canvas.width) {
+			    redCircle.x = 0;
+			}
+			
+			// not time based:
+			blueCircle.x = blueCircle.x + 5;
+			if (blueCircle.x > stage.canvas.width) {
+			    blueCircle.x = 0;
+			}
+			
+			stage.update(event);
+		}
+	</script>
+</head>
+<body onload="init();">
+	<select onchange="createjs.Ticker.setFPS(Number(this.value));">
+		<option value="10">10 fps</option>
+		<option value="20" selected="">20 fps</option>
+		<option value="30">30 fps</option>
+		<option value="40">40 fps</option>
+		<option value="50">50 fps</option>
+		<option value="60">60 fps</option>
+	</select><br>
+	<canvas id="appCanvas" width="500" height="200" style="border:1px solid black;">
+		alternate content
+	</canvas>
+
+</body></html>
