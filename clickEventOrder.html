@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>EaselJS demo: bubbling events</title>
+	<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+	<script>
+		var stage;
+		var squareHeight, squareWidth, squareCorner;
+		var output, lastPhase;
+		
+		function init() {
+		    // Init stage
+			stage = new createjs.Stage("appCanvas");
+			stage.name = "stage";
+			
+			// For mobile devices.
+			createjs.Touch.enable(stage);
+
+			// VARIABLES
+			squareHeight = 80;
+			squareWidth = 120;
+			squareCorner = 10;
+			
+			labelOutput = new createjs.Text("Clique no botão.", "13px courier", "#000000");
+			labelOutput.set({
+				lineWidth: 280,
+				lineHeight: 13,
+				x: 190,
+				y: 10
+			})
+			
+			// BUTTON BACKGROUND
+			var squareBackground = new createjs.Shape();
+			squareBackground.name = "squareBackground";
+			squareBackground.graphics.beginFill("red");
+			squareBackground.graphics.drawRoundRect(0, 0, squareWidth, squareHeight, squareCorner);
+			
+			var squareLabel = new createjs.Text("clique-me!", "bold 18px Arial", "#FFFFFF");
+			squareLabel.set({
+				name: "squareLabel",
+				textAlign: "center",
+				textBaseline: "middle",
+				x: squareWidth / 2,
+				y: squareHeight / 2
+			})
+			
+			var squareButton  = new createjs.Container();
+			squareButton.set({
+				name: "button",
+				x: 10,
+				y: 10
+			})
+			squareButton.setBounds(100, 100, squareHeight, squareWidth);
+			squareButton.addChild(squareBackground, squareLabel);
+			// setting mouseChildren to false will cause events to be dispatched directly from the button instead of its children.
+			// button.mouseChildren = false;
+			
+
+			// set up listeners for all display objects, for both the non-capture (bubble / target) and capture phases:
+			var targets = [stage,squareButton,squareLabel,squareBackground];
+			for (var i=0; i<targets.length; i++) {
+				var target = targets[i];
+				target.on("click", handleClick, null, false, null, false);
+				target.on("click", handleClick, null, false, null, true);
+			}
+	
+			stage.addChild(squareButton, labelOutput);
+			stage.update();
+		}
+		
+		function handleClick(evt) {
+			if (evt.currentTarget == stage && evt.eventPhase == 1) {
+				// this is the first dispatch in the event life cycle, clear the output.
+				labelOutput.text = "target | eventPhase | currentTarget\n";
+			}
+			
+			labelOutput.text += evt.target.name + " | " + evt.eventPhase + " | " + evt.currentTarget.name + "\n";
+			
+			if (evt.currentTarget == stage && evt.eventPhase == 3) {
+				// this is the last dispatch in the event life cycle, render the stage.
+				stage.update();
+			}
+		}
+	</script>
+</head>
+<body onload="init();">
+	<canvas id="appCanvas" width="500" height="150" style="border:1px solid black; background-color: #ffffcc">
+		alternate content
+	</canvas>
+</body>
+</html>
