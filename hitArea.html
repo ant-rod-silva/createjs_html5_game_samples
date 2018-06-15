@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>EaselJS demo: onClick</title>
+	<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+	<script>
+		var stage;
+		function init() {
+			stage = new createjs.Stage("appCanvas");
+			stage.name = "stage";
+			stage.enableMouseOver(10);
+			
+			// o evento do mouse só irá disparar se ele estiver sobre uma letra do texto.
+			// nos espaços em branco entre as letras, o evento não dispara
+			var label1 = new createjs.Text("texto sem hitArea", "48px Arial", "#F00");
+			label1.set({
+			    x: 10,
+				y: 10,
+				alpha: 0.5
+			})
+			
+			// o evento do mouse irá disparar na área ocupada pelo texto.
+			// inclui espaços em branco entre as letras
+			var label2 = new createjs.Text("texto com hitArea", "48px Arial", "#00F");
+			label2.set({
+			    x: 10,
+				y: 80,
+				alpha: 0.5
+			})
+			
+			// create a rectangle shape the same size as the text, and assign it as the hitArea
+			// note that it is never added to the display list.
+			var hit = new createjs.Shape();
+			hit.graphics.beginFill("#000000");
+			hit.graphics.drawRect(0, 0, label2.getMeasuredWidth(), label2.getMeasuredHeight());
+			label2.hitArea = hit;
+		   
+		 	label1.on("mouseover", handleInteraction);
+			label1.on("mouseout", handleInteraction);
+
+			label2.on("mouseover", handleInteraction);
+			label2.on("mouseout", handleInteraction);
+			
+			stage.addChild(label1, label2);
+			stage.update();   
+			createjs.Ticker.addEventListener("tick", stage);
+		}
+		
+		function handleInteraction(event) {
+		    event.target.alpha = (event.type == "mouseover") ? 1 : 0.5; 
+		}
+	</script>
+</head>
+<body onload="init();">
+	<canvas id="appCanvas" width="500" height="150" style="border:1px solid black; background-color: #ffffcc">
+		alternate content
+	</canvas>
+</body>
+</html>
