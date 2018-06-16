@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>EaselJS demo: Time based animation</title>
+	<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+	<script>
+		
+		var stage;
+		var box;
+		var squareHeight, squareWidth;
+		var startX, startY;
+
+		function init() {
+			//VARIABLES
+			startX = 200;
+			startY = 100;
+			squareHeight = 100;
+			squareWidth = 100;
+		
+			stage = new createjs.Stage("appCanvas");
+			stage.name = "stage";
+			
+			box = new createjs.Shape();
+			box.graphics.setStrokeStyle(2).beginStroke("black").beginFill("#999900");
+			box.graphics.rect(0, 0, squareHeight, squareWidth);
+			box.set({
+			    regX: 50,
+				regY: 50,
+				x: startX,
+				y: startY
+			})
+			
+			stage.addChild(box);
+			
+			createjs.Ticker.setFPS(20);
+			createjs.Ticker.on("tick", tick);
+		}
+
+		function tick(event) {
+			box.rotation+=5;
+			stage.update(event);
+		}
+	</script>
+</head>
+<body onload="init();">
+	<canvas id="appCanvas" width="500" height="200" style="border:1px solid black;">
+		alternate content
+	</canvas>
+
+</body></html>
