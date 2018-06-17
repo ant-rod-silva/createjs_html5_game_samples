@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="pt-BR"> 
+<head>
+    <meta charset="UTF-8" /> 
+	<title>EaselJS demo: Game Menu</title>
+	<style>
+		html, body {
+			margin:0px;
+			padding:0px;
+			background-color:#0000FF;
+			font-family:sans-serif;
+			font-size:16px;
+			overflow:hidden;
+		}
+		#logo { 
+			position: absolute;
+			right:0px;
+			bottom:0px;
+		}
+		#game {
+			width: 391px;
+			height: 586px;
+			padding: 0px 210.167px;
+			position: absolute;
+			top:0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin:auto;
+		}
+		
+	</style>
+	<script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+	<script src="https://code.createjs.com/1.0.0/easeljs.min.js"></script>
+	<script src="https://code.createjs.com/1.0.0/preloadjs.min.js"></script>
+	<script src="https://code.createjs.com/1.0.0/soundjs.min.js"></script>
+	<script src="https://code.createjs.com/1.0.0/tweenjs.min.js"></script>
+
+	<script>
+		// centering canvas screen
+		window.onload = window.onresize = function() {
+			var canvas = document.getElementById('game');
+			canvas.width = window.innerWidth * 0.8;
+			canvas.height = window.innerHeight * 0.8;
+		}
+		
+		var canvas, stage, circle;
+        var a, d, f, g;
+		var manifest;
+		var preload;
+		var progressText;
+
+		function setupManifest() {
+			manifest = [{
+				src: "img/btnSound.png",
+				id: "btnSound"
+			}, {
+				src: "img/bgMenu.png",
+				id: "bgMenu"
+			}, {
+				src: "img/headerMenu.png",
+				id: "headerMenu"
+			}, {
+				src: "img/gameTitle.png",
+				id: "gameTitle"
+			}, {
+				src: "img/btnPlay.png",
+				id: "btnPlay"
+			}, {
+				src: "img/btnMusic.png",
+				id: "btnMusic"
+			}, {
+				src: "img/timerbar.png",
+				id: "timerbar"
+			}, {
+				src: "img/bgGame.png",
+				id: "bg"
+			}, {
+				src: "img/header.png",
+				id: "header"
+			}, {
+				src: "img/btnMenu.png",
+				id: "btnMenu"
+			}, {
+				src: "img/btnMenu2.png",
+				id: "btnMenu2"
+			}, {
+				src: "img/btnRestart.png",
+				id: "btnRestart"
+			}, {
+				src: "img/btnSound.png",
+				id: "btnSound"
+			}, {
+				src: "img/btnMusic.png",
+				id: "btnMusic"
+			}, {
+				src: "img/gameTitle.png",
+				id: "gameTitle"
+			}, {
+				src: "img/timer.png",
+				id: "timer"
+			}, {
+				src: "img/popup.png",
+				id: "popup"
+			}, {
+				src: "img/box1.png",
+				id: "box1"
+			}, {
+				src: "img/box2.png",
+				id: "box2"
+			}, {
+				src: "img/box3.png",
+				id: "box3"
+			}, {
+				src: "audio/click2.ogg",
+				id: "click"
+			}, {
+				src: "audio/click.ogg",
+				id: "playClick"
+			}, {
+				src: "audio/gameover.ogg",
+				id: "gameover"
+			}, {
+				src: "audio/correct.ogg",
+				id: "correct"
+			}, {
+				src: "audio/wrong.ogg",
+				id: "wrong"
+			}, {
+				src: "audio/music.ogg",
+				id: "music"
+			}
+			];
+		}		
+
+		function startPreload() {
+		    //preload
+			preload = new createjs.LoadQueue(false); // useXHR=false
+			preload.installPlugin(createjs.Sound);          
+			preload.on("fileload", handleFileLoad);
+			preload.on("progress", handleFileProgress);
+			preload.on("complete", handlerComplete);
+			preload.on("error", loadError);
+			preload.loadManifest(manifest);
+		}
+
+		function handleFileLoad(event) {
+			console.log("A file has loaded of type: " + event.item.type);
+			if(event.item.id == "logo"){
+				console.log("Logo is loaded");
+				//create bitmap here
+			}
+		}
+
+		function loadError(evt) {
+			console.log("Error!",evt.text);
+		}
+
+		function handleFileProgress(event) {
+			progressText.text = (preload.progress*100|0) + " % Loaded";
+			stage.update();
+		}
+		 
+		function handlerComplete(event) {
+			console.log("Finished Loading Assets");
+			menu();
+		}		
+
+		function init() {
+			// creating the canvas-element 
+			var canvas = document.getElementById("game")
+			
+			// initializing the stage
+			stage = new createjs.Stage(canvas);
+			stage.name = "stage";
+			stage.enableMouseOver(20);
+			
+			// For mobile devices.
+			createjs.Touch.enable(stage);
+			
+			progressText = new createjs.Text("", "20px Arial", "#000000");
+			progressText.x = 300 - progressText.getMeasuredWidth() / 2;
+			progressText.y = 20;
+			stage.addChild(progressText);
+			
+			setupManifest();
+			startPreload();
+
+			createjs.Ticker.on("tick", tick);
+			createjs.Ticker.setFPS(60);
+			z19 = 0
+		}
+		
+		function menu() {
+			a = new createjs.Bitmap(preload.getResult('bgMenu'));
+			stage.addChild(a);
+			
+			d = new createjs.Bitmap(preload.getResult('headerMenu'));
+			stage.addChild(d);
+
+			f = new createjs.Bitmap(preload.getResult('gameTitle'));
+			f.setTransform(360, 380);
+			f.regX = f.getBounds().width / 2;
+			f.regY = f.getBounds().height / 2;
+			f.scaleX = f.scaleY = .5;
+			stage.addChild(f);
+
+			g = new createjs.Bitmap(preload.getResult('btnPlay'));
+			g.setTransform(364, 720);
+			g.regX = g.getBounds().width / 2;
+			g.regY = g.getBounds().height / 2;
+			g.cursor="pointer";
+			stage.addChild(g);
+
+			createjs.Tween.get(f).to({
+				scaleX: 1,
+				scaleY: 1
+			}, 800, createjs.Ease.backOut);
+
+			// btnPlay
+			g.on("click", function() {
+				createjs.Tween.get(g).to({
+					scaleX: .9,
+					scaleY: .9
+				}, 150).to({
+					scaleX: 1,
+					scaleY: 1
+				}, 150).call(function() {
+					alert("Iniciar jogo");
+					// stage.removeAllChildren();
+					// game();
+				})
+			});	
+		}
+		
+		function tick(event) {
+			stage.update(event);
+		}
+	</script>
+</head>
+<body onload="init();">
+	<canvas id="game" width="720" height="1080">
+	Kids Math
+    </canvas>
+	<a href="https://createjs.com/" target="_blank">
+		<img id="logo" src="https://createjs.com/mediakit/createjs-badge-reverse.png">
+	</a>
+</body>
+</html>
