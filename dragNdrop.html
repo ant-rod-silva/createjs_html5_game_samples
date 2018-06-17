@@ -1,17 +1,52 @@
 <html>
 <head>
+	<style>
+		html, body {
+			margin:0px;
+			padding:0px;
+			background-color:#0000FF;
+			font-family:sans-serif;
+			font-size:16px;
+			overflow:hidden;
+		}
+		#logo { 
+			position: absolute;
+			right:0px;
+			bottom:0px;
+		}
+		#appCanvas {
+			border:1px solid black;
+			background-color: #ffffff;
+			position: absolute;
+			top:0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin:auto;
+		}
+		#
+	</style>
+	
     <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
 	<script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
     <script src="https://code.createjs.com/soundjs-0.6.2.min.js"></script></head>
     <script src="https://code.createjs.com/preloadjs-0.6.2.min.js"></script>
 
 	<script>
+	// centering canvas screen
+	window.onload = window.onresize = function() {
+		var canvas = document.getElementById('appCanvas');
+		canvas.width = window.innerWidth * 0.8;
+		canvas.height = window.innerHeight * 0.8;
+	}
+
 	var stage;
-	var circleRadius, squareHeight, squareWidth;
+	var circle, circleRadius, squareHeight, squareWidth, circleLabel, circleContainer, box, squareLabel, squareContainer;
     function init() {
 		// Init stage
 		stage = new createjs.Stage("appCanvas");
 		stage.name = "stage";
+		stage.enableMouseOver(20);
 
 		// For mobile devices.
 		createjs.Touch.enable(stage);
@@ -23,12 +58,12 @@
 		squareWidth = 100;
 		
 		// circle
-		var circle = new createjs.Shape();
+		circle = new createjs.Shape();
         circle.graphics.setStrokeStyle(2).beginStroke("black").beginFill("red");
 		circle.graphics.drawCircle(0,0, circleRadius);
 
 		// text inside circle
-		var circleLabel = new createjs.Text("arraste-me", "bold 14px Arial", "#FFFFFF");
+		circleLabel = new createjs.Text("arraste-me", "bold 14px Arial", "#FFFFFF");
 		circleLabel.set({
 			name: "circleLabel",
 			textAlign: "center", // alinhamento horizontal
@@ -38,19 +73,21 @@
 
         // Drag Object Creation
 		// Placed inside a container to hold both label and shape
-		var circleContainer = new createjs.Container();
+		circleContainer = new createjs.Container();
 		circleContainer.set({
 			name: "circleContainer",
 			x: 100,
 			y: 100
 		})
 		circleContainer.addChild(circle, circleLabel);
+		circleContainer.cursor="pointer";
 
-		var box = new createjs.Shape();
+
+		box = new createjs.Shape();
 		box.graphics.setStrokeStyle(2).beginStroke("black").beginFill("#FFFFFF");
 		box.graphics.rect(0, 0, squareHeight, squareWidth);
 
-		var squareLabel = new createjs.Text("ATÉ AQUI", "bold 14px Lato", "#000");
+		squareLabel = new createjs.Text("ATÉ AQUI", "bold 14px Lato", "#000");
 		squareLabel.set({
 			name: "squareLabel",
 			textAlign: "center",
@@ -59,7 +96,7 @@
 			y: squareHeight / 2
 		})
 
-		var squareContainer = new createjs.Container();
+		squareContainer = new createjs.Container();
 		squareContainer.set({
 			name: "squareContainer",
 			x: 350,
@@ -137,6 +174,8 @@
 <body>
 <body onload="init();">
   <canvas id="appCanvas" width="500" height="300" style="border:1px solid black; background-color: #ffffcc"></canvas>
-</body>
+	<a href="https://createjs.com/" target="_blank">
+		<img id="logo" src="https://createjs.com/mediakit/createjs-badge-reverse.png">
+	</a>
 </body>
 </html>
