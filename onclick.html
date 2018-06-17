@@ -2,27 +2,60 @@
 <html>
 <head>
 	<title>EaselJS onClick</title>
-	<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>	
+	<style>
+		html, body {
+			margin:0px;
+			padding:0px;
+			background-color:#0000FF;
+			font-family:sans-serif;
+			font-size:16px;
+			overflow:hidden;
+		}
+		#logo { 
+			position: absolute;
+			right:0px;
+			bottom:0px;
+		}
+		#appCanvas {
+			border:1px solid black;
+			background-color: #ffffff;
+			position: absolute;
+			top:0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin:auto;
+		}
+		</style>
+	<script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
 	<script>
+	    // centering canvas screen
+		window.onload = window.onresize = function() {
+			var canvas = document.getElementById('appCanvas');
+			canvas.width = window.innerWidth * 0.8;
+			canvas.height = window.innerHeight * 0.8;
+		}
+		
+	    var stage, circle, circleLabel, circleContainer;
 		function init() {
-			var stage = new createjs.Stage("appCanvas");
+			stage = new createjs.Stage("appCanvas");
 			createjs.Touch.enable(stage);
 			
 			circleRadius = 50;
 			
 			// circle
-			var circle = new createjs.Shape();
+			circle = new createjs.Shape();
 			circle.graphics.setStrokeStyle(2).beginStroke("black").beginFill("red");
 			circle.graphics.drawCircle(0,0, circleRadius);
 			
 			// text inside circle
-			var circleLabel = new createjs.Text("clique-me", "bold 14px Arial", "#FFFFFF");
+			circleLabel = new createjs.Text("clique-me", "bold 14px Arial", "#FFFFFF");
 			circleLabel.set({
 			  textAlign: "center",
 			  textBaseline: "middle",
 			})
 			
-			var circleContainer = new createjs.Container();
+			circleContainer = new createjs.Container();
 			circleContainer.set({
 			  x: 100,
 			  y: 100
@@ -40,8 +73,11 @@
 	</script>
 </head>
 <body onload="init();">
-	<canvas id="appCanvas" width="500" height="200" style="border:1px solid black; background-color: #ffffcc">
-		alternate content
-	</canvas>
-</body>
-</html>
+		<canvas id="appCanvas" width="400" height="200">
+			alternate content
+		</canvas>
+	<a href="https://createjs.com/" target="_blank">
+		<img id="logo" src="https://createjs.com/mediakit/createjs-badge-reverse.png">
+	</a>
+
+</body></html>
